@@ -9,9 +9,13 @@ import pygame
 import random
 
 
-MAX_DISTANCE = 40.0
+WIDTH = 800
+HEIGHT = 600
+MAX_DISTANCE = 30.0
 COLOR_DISTANCE_RATIO = 30.0/(256+256+256)
+EXTRA_RATIO_FACTOR = 0.8
 NODE_RADIUS = 7
+REMOVE_CIRCLE_TURN = 2
 
 class NetworkCircle:
     def __init__(self, x, y, color, radius=3):
@@ -27,7 +31,8 @@ class NetworkCircle:
     def calculate_reach(self):
         r, g, b = self.color
 
-        reach = COLOR_DISTANCE_RATIO * (r + g + b)
+        reach = COLOR_DISTANCE_RATIO * (r + g + b) * EXTRA_RATIO_FACTOR
+        #print("reach:", reach)
         return reach
 
     def update(self):
@@ -45,8 +50,8 @@ class NetworkCircle:
 def new_circle(coords: tuple, bounds: tuple = (80, 80)):
     x, y = coords
     bx, by = bounds
-    new_x = x + random.randint(-bx, bx)
-    new_y = y + random.randint(-by, by)
+    new_x = min(max(x + random.randint(-bx, bx), 0), WIDTH)
+    new_y = min(max(y + random.randint(-by, by), 0), HEIGHT)
     return NetworkCircle(
         new_x, new_y,
         (
@@ -60,8 +65,6 @@ def new_circle(coords: tuple, bounds: tuple = (80, 80)):
 def edge_id(n1, n2): return tuple(sorted((n1, n2)))
 
 def nodes_are_close(circles, n1, n2):
-    print("n1:", n1)
-    print("n2:", n2)
     c1 = circles[n1]
     c2 = circles[n2]
 
@@ -74,7 +77,16 @@ def draw_edges(surface, circles):
             if j <= i:
                 continue
             if edge_id(i, j) not in edges and nodes_are_close(circles, i, j):
-                pygame.draw.line(surface, (255, 255, 255), c1.coords(), c2.coords())
+                pygame.draw.line(
+                    surface,
+                    (
+                        random.randint(0, 255),
+                        random.randint(0, 255),
+                        random.randint(0, 255)
+                    ),
+                    c1.coords(),
+                    c2.coords()
+                )
                 edges[edge_id(i, j)] = 1
 
 def main():
@@ -82,8 +94,11 @@ def main():
 
     info_object = pygame.display.Info()
 
-    screen_w = int(info_object.current_w/2.5)
-    screen_h = int(info_object.current_h/2.5)
+    #screen_w = int(info_object.current_w/2.5)
+    #screen_h = int(info_object.current_h/2.5)
+
+    screen_w = WIDTH
+    screen_h = HEIGHT
 
     screen = pygame.display.set_mode([screen_w, screen_h])
 
@@ -116,6 +131,7 @@ def main():
 
     # Run until the music finishes or let the user quits
     running = True
+    del_index = 0
     while running:
         t = pygame.time.get_ticks()
         #delta_time = (t - last_tick) / 1000.0
@@ -136,6 +152,12 @@ def main():
 
         # update the full display surface to the screen
         pygame.display.flip()
+        pygame.time.wait(150)
+
+        del_index += 1
+        if del_index % REMOVE_CIRCLE_TURN == 0:
+            del_index = 0
+            del circles[random.randint(0, len(circles) - 1)]
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
