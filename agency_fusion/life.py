@@ -7,13 +7,15 @@ Author: Abdelrahman Elbashandy - AR
 import argparse
 import pygame
 import random
+import math
 
 
 WIDTH = 800
 HEIGHT = 600
-MAX_DISTANCE = 30.0
-COLOR_DISTANCE_RATIO = 30.0/(256+256+256)
-EXTRA_RATIO_FACTOR = 0.8
+PADDING = 50
+MAX_DISTANCE = 70.0
+COLOR_DISTANCE_RATIO = MAX_DISTANCE/(256+256+256)
+EXTRA_RATIO_FACTOR = 1
 NODE_RADIUS = 7
 REMOVE_CIRCLE_TURN = 2
 
@@ -50,8 +52,8 @@ class NetworkCircle:
 def new_circle(coords: tuple, bounds: tuple = (80, 80)):
     x, y = coords
     bx, by = bounds
-    new_x = min(max(x + random.randint(-bx, bx), 0), WIDTH)
-    new_y = min(max(y + random.randint(-by, by), 0), HEIGHT)
+    new_x = min(max(x + random.randint(-bx, bx), 0 + PADDING), WIDTH - PADDING)
+    new_y = min(max(y + random.randint(-by, by), 0 + PADDING), HEIGHT - PADDING)
     return NetworkCircle(
         new_x, new_y,
         (
@@ -68,7 +70,12 @@ def nodes_are_close(circles, n1, n2):
     c1 = circles[n1]
     c2 = circles[n2]
 
-    return (c1.reach + c2.reach) >= MAX_DISTANCE
+    x1, y1 = c1.coords()
+    x2, y2 = c2.coords()
+
+    distance = math.sqrt(((x2-x1)**2) + ((y2-y1)**2))
+
+    return distance <= MAX_DISTANCE and (c1.reach + c2.reach) >= distance
 
 def draw_edges(surface, circles):
     edges = {}
@@ -114,36 +121,14 @@ def main():
         )
     )
 
-    '''
-    circles.append(NetworkCircle(
-            screen_w/2+60,
-            screen_h/2,
-            (255, 255, 255),
-            radius=NODE_RADIUS
-        ))
-    '''
-
-    t = pygame.time.get_ticks()
-    last_tick = t
-
-    #pygame.mixer.music.load(audiofile)
-    #pygame.mixer.music.play(0)
-
     # Run until the music finishes or let the user quits
     running = True
     del_index = 0
     while running:
-        t = pygame.time.get_ticks()
-        #delta_time = (t - last_tick) / 1000.0
-        last_tick = t
-
         screen.fill((0, 0, 0))
 
         for c in circles:
             c.update()
-
-        new_c = new_circle(circles[random.randint(0, len(circles) - 1)].coords())
-        circles.append(new_c)
 
         draw_edges(screen, circles)
 
@@ -152,7 +137,10 @@ def main():
 
         # update the full display surface to the screen
         pygame.display.flip()
-        pygame.time.wait(150)
+        pygame.time.wait(200)
+
+        new_c = new_circle(circles[random.randint(0, len(circles) - 1)].coords())
+        circles.append(new_c)
 
         del_index += 1
         if del_index % REMOVE_CIRCLE_TURN == 0:
