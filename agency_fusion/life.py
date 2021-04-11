@@ -18,6 +18,7 @@ COLOR_DISTANCE_RATIO = MAX_DISTANCE/(256+256+256)
 EXTRA_RATIO_FACTOR = 1
 NODE_RADIUS = 7
 REMOVE_CIRCLE_TURN = 2
+WAIT_TIME = 150
 
 class NetworkCircle:
     def __init__(self, x, y, color, radius=3):
@@ -137,7 +138,7 @@ def main():
 
         # update the full display surface to the screen
         pygame.display.flip()
-        pygame.time.wait(200)
+        pygame.time.wait(WAIT_TIME)
 
         new_c = new_circle(circles[random.randint(0, len(circles) - 1)].coords())
         circles.append(new_c)
