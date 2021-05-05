@@ -36,7 +36,7 @@ python audio_visuals/play.py --audio audio/ekhwati.wav
 
 A python script that simulates a network that is structered on a random basis and other factors. The simulation is a basic abstracted template of the relationships that formulate between actants. It touches the fields of Affect theory and Actor-Network theory.
 
-The script was run through Python 3.9.
+The script was run with Python 3.9.
 
 To install the necessary libraries:
 ```sh
@@ -48,3 +48,28 @@ To run the script:
 agency_fusion/life.py
 ```
 
+### Creative Repurposing in Media
+
+A python script that mixes both projects: 'Audio Visualization' & 'Agency Fusion in Media'. Each node/circle represents both the audio frequency that expands based on the music amplitude, and also the actants that are networked.
+
+The script was run with Python 3.9.
+
+To install the necessary libraries:
+```sh
+pip3 install -r agency_fusion/requirements.txt
+```
+
+To run the script:
+```sh
+media_repurposing/mix.py --audio [audiofile]
+```
+
+There are two sample audio files on which the script could be tested:
+
+```
+# relaxing music
+python media_repurposing/mix.py --audio audio/rudra_mantra.wav
+
+# intense music
+python media_repurposing/mix.py --audio audio/ekhwati.wav
+```
