@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''
 Audio Visualizer
-Author: Abdelrahman Elbashandy
+Author: Abdelrahman Elbashandy - AR <a.elbashandy@gmail.com>
 '''
 
 import librosa

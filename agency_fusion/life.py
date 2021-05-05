@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''
 Agency Fusion Network
-Author: Abdelrahman Elbashandy - AR
+Author: Abdelrahman Elbashandy - AR <a.elbashandy@gmail.com>
 '''
 
 import argparse
